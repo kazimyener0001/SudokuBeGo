@@ -140,16 +140,14 @@ async function startServer() {
     return count;
   };
 
-  const generatePuzzle = (difficulty: 'very-easy' | 'easy' | 'medium' | 'hard' | 'expert', rng = Math.random) => {
+  const generatePuzzle = (difficulty: 'easy' | 'medium' | 'hard', rng = Math.random) => {
     const fullGrid = generateFullGrid(rng);
     const puzzle = fullGrid.map(row => [...row]);
     
     const difficultyMap = {
-      'very-easy': 20,
       'easy': 30,
       'medium': 40,
-      'hard': 50,
-      'expert': 55
+      'hard': 50
     };
     
     let cellsToRemove = difficultyMap[difficulty] || 40;
@@ -203,7 +201,7 @@ async function startServer() {
       username: z.string().min(3).max(20),
       time: z.number().int().positive(),
       mistakes: z.number().int().nonnegative(),
-      difficulty: z.enum(['very-easy', 'easy', 'medium', 'hard', 'expert']),
+      difficulty: z.enum(['easy', 'medium', 'hard']),
       isDaily: z.boolean().optional(),
     });
 
@@ -213,11 +211,9 @@ async function startServer() {
     const { username, time, mistakes, difficulty, isDaily } = result.data;
 
     const minTimeMap: Record<string, number> = {
-      'very-easy': 15,
       'easy': 30,
       'medium': 60,
-      'hard': 120,
-      'expert': 180
+      'hard': 120
     };
     const minTime = minTimeMap[difficulty] || 60;
     if (time < minTime) {

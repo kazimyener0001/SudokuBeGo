@@ -31,7 +31,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 // --- Types ---
-type Difficulty = 'very-easy' | 'easy' | 'medium' | 'hard' | 'expert';
+type Difficulty = 'easy' | 'medium' | 'hard';
 type Cell = {
   value: number;
   initial: boolean;
@@ -428,13 +428,11 @@ export default function App() {
                     <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800"></div>
                   </div>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
-                      { id: 'very-easy', label: 'Çok Kolay', icon: Feather, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10', border: 'hover:border-emerald-500' },
                       { id: 'easy', label: 'Kolay', icon: Leaf, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-500/10', border: 'hover:border-green-500' },
                       { id: 'medium', label: 'Orta', icon: Flame, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10', border: 'hover:border-amber-500' },
-                      { id: 'hard', label: 'Zor', icon: Zap, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-500/10', border: 'hover:border-orange-500' },
-                      { id: 'expert', label: 'Uzman', icon: Skull, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-500/10', border: 'hover:border-red-500' }
+                      { id: 'hard', label: 'Zor', icon: Zap, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-500/10', border: 'hover:border-orange-500' }
                     ].map((diff) => {
                       const Icon = diff.icon;
                       return (
@@ -745,7 +743,7 @@ const LeaderboardView = ({ onBack, difficulty, setDifficulty }: { onBack: () => 
       </div>
 
       <div className="flex gap-1 mb-8 bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl overflow-x-auto no-scrollbar">
-        {['very-easy', 'easy', 'medium', 'hard', 'expert', 'daily'].map((d) => (
+        {['easy', 'medium', 'hard', 'daily'].map((d) => (
           <button
             key={d}
             onClick={() => setDifficulty(d as any)}
@@ -756,11 +754,9 @@ const LeaderboardView = ({ onBack, difficulty, setDifficulty }: { onBack: () => 
                 : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
             )}
           >
-            {d === 'very-easy' ? 'Çok Kolay' : 
-             d === 'easy' ? 'Kolay' : 
+             {d === 'easy' ? 'Kolay' : 
              d === 'medium' ? 'Orta' : 
-             d === 'hard' ? 'Zor' : 
-             d === 'expert' ? 'Uzman' : (
+             d === 'hard' ? 'Zor' : (
                <div className="flex items-center gap-1">
                  Günlük
                  <span className="relative flex h-1.5 w-1.5">
