@@ -176,7 +176,7 @@ export default function App() {
     try {
       let currentUsername = username;
       
-      if (daily || !currentUsername) {
+      if (!currentUsername) {
         const promptMsg = daily 
           ? "Turnuvada görünecek ismini yaz canım (en az 3 karakter):" 
           : "Oyuna girmek için ismini yaz canım (en az 3 karakter):";
@@ -319,22 +319,35 @@ export default function App() {
                 {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
               {username ? (
-                <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full text-sm font-medium shadow-sm">
+                <button 
+                  onClick={() => {
+                    const name = prompt("İsmini değiştirmek ister misin canım?", username);
+                    if (name && name.trim().length >= 3) {
+                      setUsername(name.trim());
+                      localStorage.setItem('sudoku_user', name.trim());
+                    } else if (name !== null) {
+                      alert("İsim en az 3 karakter olmalı canım!");
+                    }
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full text-sm font-medium shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+                >
                   <UserIcon className="w-4 h-4 text-indigo-500" />
                   {username}
-                </div>
+                </button>
               ) : (
                 <button 
                   onClick={() => {
-                    const name = prompt("Enter your username:");
-                    if (name) {
-                      setUsername(name);
-                      localStorage.setItem('sudoku_user', name);
+                    const name = prompt("İsmini gir canım (en az 3 karakter):");
+                    if (name && name.trim().length >= 3) {
+                      setUsername(name.trim());
+                      localStorage.setItem('sudoku_user', name.trim());
+                    } else if (name !== null) {
+                      alert("İsim en az 3 karakter olmalı canım!");
                     }
                   }}
                   className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
                 >
-                  Set Username
+                  İsim Belirle
                 </button>
               )}
             </div>
