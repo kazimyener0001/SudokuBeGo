@@ -14,7 +14,12 @@ import {
   ChevronRight,
   Play,
   Moon,
-  Sun
+  Sun,
+  Feather,
+  Leaf,
+  Flame,
+  Zap,
+  Skull
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -168,43 +173,48 @@ export default function App() {
 
   // --- Game Logic ---
   const startNewGame = useCallback(async (diff: Difficulty, daily = false) => {
-    let currentUsername = username;
-    
-    if (daily || !currentUsername) {
-      const promptMsg = daily 
-        ? "Turnuvada görünecek ismini yaz canım (en az 3 karakter):" 
-        : "Oyuna girmek için ismini yaz canım (en az 3 karakter):";
-      const name = prompt(promptMsg, currentUsername || "");
+    try {
+      let currentUsername = username;
       
-      if (!name || name.trim().length < 3) {
-        if (name !== null) alert("İsim en az 3 karakter olmalı canım!");
-        return;
+      if (daily || !currentUsername) {
+        const promptMsg = daily 
+          ? "Turnuvada görünecek ismini yaz canım (en az 3 karakter):" 
+          : "Oyuna girmek için ismini yaz canım (en az 3 karakter):";
+        const name = prompt(promptMsg, currentUsername || "");
+        
+        if (!name || name.trim().length < 3) {
+          if (name !== null) alert("İsim en az 3 karakter olmalı canım!");
+          return;
+        }
+        currentUsername = name.trim();
+        setUsername(currentUsername);
+        localStorage.setItem('sudoku_user', currentUsername);
       }
-      currentUsername = name.trim();
-      setUsername(currentUsername);
-      localStorage.setItem('sudoku_user', currentUsername);
-    }
 
-    const data = daily ? await API.getDaily() : await API.getPuzzle(diff);
-    const newGrid = data.puzzle.map((row: number[]) => 
-      row.map((val: number) => ({
-        value: val,
-        initial: val !== 0,
-        notes: [],
-      }))
-    );
-    setGrid(newGrid);
-    setSolution(data.solution);
-    setDifficulty(diff);
-    setIsDaily(daily);
-    setTime(0);
-    setMistakes(0);
-    setIsGameOver(false);
-    setSelected(null);
-    setHistory([JSON.parse(JSON.stringify(newGrid))]);
-    setHistoryIndex(0);
-    setView('game');
-  }, []);
+      const data = daily ? await API.getDaily() : await API.getPuzzle(diff);
+      const newGrid = data.puzzle.map((row: number[]) => 
+        row.map((val: number) => ({
+          value: val,
+          initial: val !== 0,
+          notes: [],
+        }))
+      );
+      setGrid(newGrid);
+      setSolution(data.solution);
+      setDifficulty(diff);
+      setIsDaily(daily);
+      setTime(0);
+      setMistakes(0);
+      setIsGameOver(false);
+      setSelected(null);
+      setHistory([JSON.parse(JSON.stringify(newGrid))]);
+      setHistoryIndex(0);
+      setView('game');
+    } catch (error) {
+      console.error("Failed to start game:", error);
+      alert("Oyun yüklenirken bir hata oluştu. Lütfen tekrar dene canım.");
+    }
+  }, [username]);
 
   useEffect(() => {
     let timer: any;
@@ -407,25 +417,28 @@ export default function App() {
                   
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     {[
-                      { id: 'very-easy', label: 'Çok Kolay', color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10', border: 'hover:border-emerald-500' },
-                      { id: 'easy', label: 'Kolay', color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-500/10', border: 'hover:border-green-500' },
-                      { id: 'medium', label: 'Orta', color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10', border: 'hover:border-amber-500' },
-                      { id: 'hard', label: 'Zor', color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-500/10', border: 'hover:border-orange-500' },
-                      { id: 'expert', label: 'Uzman', color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-500/10', border: 'hover:border-red-500' }
-                    ].map((diff) => (
-                      <button
-                        key={diff.id}
-                        onClick={() => startNewGame(diff.id as Difficulty)}
-                        className={`p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-center ${diff.border} hover:shadow-lg transition-all group flex flex-col items-center justify-center gap-4`}
-                      >
-                        <div className={`w-12 h-12 ${diff.bg} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                          <div className={`w-5 h-5 rounded-sm ${diff.color.replace('text-', 'bg-')} opacity-80`}></div>
-                        </div>
-                        <h3 className="font-bold text-zinc-900 dark:text-zinc-100">
-                          {diff.label}
-                        </h3>
-                      </button>
-                    ))}
+                      { id: 'very-easy', label: 'Çok Kolay', icon: Feather, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10', border: 'hover:border-emerald-500' },
+                      { id: 'easy', label: 'Kolay', icon: Leaf, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-500/10', border: 'hover:border-green-500' },
+                      { id: 'medium', label: 'Orta', icon: Flame, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10', border: 'hover:border-amber-500' },
+                      { id: 'hard', label: 'Zor', icon: Zap, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-500/10', border: 'hover:border-orange-500' },
+                      { id: 'expert', label: 'Uzman', icon: Skull, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-500/10', border: 'hover:border-red-500' }
+                    ].map((diff) => {
+                      const Icon = diff.icon;
+                      return (
+                        <button
+                          key={diff.id}
+                          onClick={() => startNewGame(diff.id as Difficulty)}
+                          className={`p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-center ${diff.border} hover:shadow-lg transition-all group flex flex-col items-center justify-center gap-4`}
+                        >
+                          <div className={`w-12 h-12 ${diff.bg} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                            <Icon className={`w-6 h-6 ${diff.color}`} />
+                          </div>
+                          <h3 className="font-bold text-zinc-900 dark:text-zinc-100">
+                            {diff.label}
+                          </h3>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

@@ -147,27 +147,39 @@ async function startServer() {
     const difficultyMap = {
       'very-easy': 20,
       'easy': 30,
-      'medium': 45,
-      'hard': 60,
-      'expert': 75
+      'medium': 40,
+      'hard': 50,
+      'expert': 55
     };
     
-    let attempts = difficultyMap[difficulty] || 45;
+    let cellsToRemove = difficultyMap[difficulty] || 40;
 
-    while (attempts > 0) {
-      const row = Math.floor(rng() * 9);
-      const col = Math.floor(rng() * 9);
-      if (puzzle[row][col] === 0) continue;
-
-      const backup = puzzle[row][col];
-      puzzle[row][col] = 0;
-
-      const tempGrid = puzzle.map(r => [...r]);
-      if (countSolutions(tempGrid) !== 1) {
-        puzzle[row][col] = backup;
+    // Create a list of all 81 positions and shuffle them
+    const positions = [];
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        positions.push({ r, c });
       }
-      attempts--;
     }
+    positions.sort(() => rng() - 0.5);
+
+    for (const pos of positions) {
+      if (cellsToRemove <= 0) break;
+
+      const { r, c } = pos;
+      const backup = puzzle[r][c];
+      puzzle[r][c] = 0;
+
+      const tempGrid = puzzle.map(row => [...row]);
+      if (countSolutions(tempGrid) !== 1) {
+        // Not unique, put it back
+        puzzle[r][c] = backup;
+      } else {
+        // Successfully removed
+        cellsToRemove--;
+      }
+    }
+
     return { puzzle, solution: fullGrid };
   };
 
